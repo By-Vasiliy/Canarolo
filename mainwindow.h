@@ -18,7 +18,7 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-
+    void resizeEvent(QResizeEvent* event);
     void basic();
     void various();
 

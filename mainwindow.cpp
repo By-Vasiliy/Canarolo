@@ -172,9 +172,6 @@ void MainWindow::various(){
     int n = ui->spinBox->value();
     double temp = (double)n/100.0*(double)hs;
     int k = (int)temp;
-
-
-
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
     czeroed(c1, k, n);
@@ -213,6 +210,12 @@ void MainWindow::various(){
         ui->widget->replot();
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+   ui->widget->resize(QMainWindow::width(), QMainWindow::height()-150);
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -227,8 +230,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->graph(0)->setPen(QColor(255, 0, 0, 255));
     ui->widget->graph(1)->setPen(QColor(0, 0, 255, 255));
     //
-    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
-    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
+    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
     //Подписываем оси Ox и Oy
     ui->widget->xAxis->setLabel("x");
     ui->widget->yAxis->setLabel("y");
@@ -293,10 +296,10 @@ void MainWindow::on_pushButton_clicked()
         ui->widget->replot();
 }
 
-void MainWindow::on_spinBox_valueChanged(int arg1)
+void MainWindow::on_spinBox_valueChanged(int value)
 {
     basic();
-    various();
+    //various();
 }
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
@@ -304,12 +307,12 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
     various();
 }
 
-void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
+void MainWindow::on_doubleSpinBox_valueChanged(double value)
 {
-    ui->doubleSpinBox_2->setProperty("minimum",ui->doubleSpinBox->value());
+    ui->doubleSpinBox_2->setProperty("minimum",value);
 }
 
-void MainWindow::on_doubleSpinBox_2_valueChanged(double arg1)
+void MainWindow::on_doubleSpinBox_2_valueChanged(double value)
 {
-    ui->doubleSpinBox->setProperty("maximum",ui->doubleSpinBox_2->value());
+    ui->doubleSpinBox->setProperty("maximum",value);
 }
