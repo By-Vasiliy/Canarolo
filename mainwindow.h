@@ -22,6 +22,7 @@ private slots:
     void basic();
     void various();
 
+
     void on_spinBox_valueChanged(int arg1);
 
     void on_horizontalSlider_valueChanged(int value);

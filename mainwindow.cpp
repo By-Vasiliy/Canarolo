@@ -82,15 +82,18 @@ void bubblesort(complex <double> mas[], int n){
         }
     }
 }
-
+int counter = 0;
 void czeroed (complex <double> c[], int k, int n){
     complex <double> *c0 = new complex <double> [n];
     arraycopy(c, c0, n);
     bubblesort(c0, n);
-    for (int i=0, j=0;i<n;i++, j<k){
-        if (abs(c[i])<abs(c0[k])){
-            c[i] = 0;
+    counter=0;
+    for (int i=0, j=0;i<n && j<=k;i++){
+        if (abs(c[i])<=abs(c0[k-1])){
+            //c[i]=0;
+            c[i]=0;
             j++;
+            counter++;
         }
     }
 }
@@ -109,7 +112,7 @@ complex <double> *f1 = new complex <double> [1];
 double max_x=0,min_x=0,max_y=0,min_y=0;
 
 
-int counter = 0;
+
 
 //функция, возвращающая массив N случайных комплексных чисел от a до b
 void random_array(complex <double> mas[], int n, double a, double b){
@@ -131,47 +134,29 @@ void MainWindow::basic(){
     c = multypl(invT, f, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
-
-
         max_x = f[0].real();
         min_x = f[0].real();
         max_y=f[0].imag();
         min_y=f[0].imag();
-
         for (int i = 0; i<n; i++)//Пробегаем по всем точкам
         {
             x[i] = f[i].real();
             y[i] = f[i].imag();
-
-
             if (f[i].real() > max_x) {
                 max_x = f[i].real();
             }
-
             if (f[i].real() < min_x) {
                 min_x = f[i].real();
             }
-
             if (f[i].imag() > max_y){
                 max_y=f[i].imag();
             }
-
             if (f[i].imag() < min_y){
                 min_y=f[i].imag();
             }
-
         }
 
-        //ui->widget->clearGraphs();//Если нужно, но очищаем все графики
-        //Добавляем один график в widget
-        //ui->widget->addGraph();
-        //Говорим, что отрисовать нужно график по нашим двум массивам x и y
         ui->widget->graph(0)->setData(x, y);
-        //customPlot->graph(0)->setPen(QPen(Qt::blue));
-
-        //Подписываем оси Ox и Oy
-        ui->widget->xAxis->setLabel("x");
-        ui->widget->yAxis->setLabel("y");
 
         //Установим область, которая будет показываться на графике
         ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
@@ -179,6 +164,7 @@ void MainWindow::basic(){
 
         //И перерисуем график на нашем widget
         ui->widget->replot();
+        various();
 }
 
 void MainWindow::various(){
@@ -187,39 +173,34 @@ void MainWindow::various(){
     double temp = (double)n/100.0*(double)hs;
     int k = (int)temp;
 
-    //ui->spinBox_2->setProperty("value",k);
+
 
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
     czeroed(c1, k, n);
+
+    ui->spinBox_3->setProperty("value", counter);
+
     f1 = new complex <double> [n];
     f1=multypl(T, c1, n);
 
-
     QVector<double> x(n), y(n); //Массивы координат точек
-
         for (int i = 0; i<n; i++)//Пробегаем по всем точкам
         {
             x[i] = f1[i].real();
             y[i] = f1[i].imag();
-
-
             if (f1[i].real() > max_x) {
                 max_x = f1[i].real();
             }
-
             if (f1[i].real() < min_x) {
                 min_x = f1[i].real();
             }
-
             if (f1[i].imag() > max_y){
                 max_y=f1[i].imag();
             }
-
             if (f1[i].imag() < min_y){
                 min_y=f1[i].imag();
             }
-
         }
 
         ui->widget->graph(1)->setData(x, y);
@@ -239,18 +220,20 @@ MainWindow::MainWindow(QWidget *parent) :
     srand(time(0));
 
     ui->setupUi(this);
-
+    //
     ui->widget->addGraph();
     ui->widget->addGraph();
+    //
     ui->widget->graph(0)->setPen(QColor(255, 0, 0, 255));
     ui->widget->graph(1)->setPen(QColor(0, 0, 255, 255));
-
+    //
+    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
+    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
     //Подписываем оси Ox и Oy
     ui->widget->xAxis->setLabel("x");
     ui->widget->yAxis->setLabel("y");
 
     basic();
-    various();
 }
 
 MainWindow::~MainWindow()
