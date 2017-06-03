@@ -26,6 +26,10 @@ private slots:
 
     void on_horizontalSlider_valueChanged(int value);
 
+    void on_doubleSpinBox_valueChanged(double arg1);
+
+    void on_doubleSpinBox_2_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
 };

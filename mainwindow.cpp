@@ -123,7 +123,7 @@ void random_array(complex <double> mas[], int n, double a, double b){
 void MainWindow::basic(){
     int n = ui->spinBox->value();
     f = new complex <double> [n];
-    random_array(f, n, BottomBound, TopBound);
+    random_array(f, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
     T = new complex <double> *[n];
     T=matrix(n);
     c = new complex <double> [n];
@@ -186,6 +186,8 @@ void MainWindow::various(){
     int n = ui->spinBox->value();
     double temp = (double)n/100.0*(double)hs;
     int k = (int)temp;
+
+    //ui->spinBox_2->setProperty("value",k);
 
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
@@ -317,4 +319,14 @@ void MainWindow::on_spinBox_valueChanged(int arg1)
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     various();
+}
+
+void MainWindow::on_doubleSpinBox_valueChanged(double arg1)
+{
+    ui->doubleSpinBox_2->setProperty("minimum",ui->doubleSpinBox->value());
+}
+
+void MainWindow::on_doubleSpinBox_2_valueChanged(double arg1)
+{
+    ui->doubleSpinBox->setProperty("maximum",ui->doubleSpinBox_2->value());
 }
