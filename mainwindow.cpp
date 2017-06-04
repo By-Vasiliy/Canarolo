@@ -55,7 +55,8 @@ complex <double> **inv(complex <double> **mas, int n){
 complex <double> *userfunction (complex <double> *z, int n){
     complex <double> *f = new complex <double> [n];
     for (int i=0;i<n;i++){
-        f[i]=z[i]*z[i];
+        //f[i]=z[i]*z[i];
+        f[i]=sin(z[i]);
     }
     return f;
 }
@@ -304,6 +305,9 @@ void MainWindow::various(){
     if (hs==0){
         k=0;
     }
+    if (hs==100){
+        k=n;
+    }
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
     czeroedcomplex(c1, k, n);
@@ -349,6 +353,9 @@ void MainWindow::various2(){
     int k = int(temp);
     if (hs==0){
         k=0;
+    }
+    if (hs==100){
+        k=n;
     }
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
