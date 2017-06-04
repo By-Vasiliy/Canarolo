@@ -50,6 +50,16 @@ complex <double> **inv(complex <double> **mas, int n){
     }
     return invmatrix;
 }
+
+//пользовательская функция
+complex <double> *userfunction (complex <double> *z, int n){
+    complex <double> *f = new complex <double> [n];
+    for (int i=0;i<n;i++){
+        f[i]=z[i]*z[i];
+    }
+    return f;
+}
+
 //функция, возвращающая вектор=матрица*вектор
 complex <double> *multypl (complex <double> **mas, complex <double> *v1, int n){
     complex <double> *v2 = new complex <double> [n];
@@ -70,7 +80,7 @@ void arraycopy (complex <double> mas1[], complex <double> mas2[], int n){
 }
 
 //сортировка массива
-void bubblesort(complex <double> mas[], int n){
+void bubblesortcomplex(complex <double> mas[], int n){
     complex <double> a;
     for(int i=0; i<n; i++) {
         for(int j=n-1; j>i; j--) {
@@ -82,11 +92,25 @@ void bubblesort(complex <double> mas[], int n){
         }
     }
 }
+
+void bubblesortdouble(complex <double> mas[], int n){
+    complex <double> a;
+    for(int i=0; i<n; i++) {
+        for(int j=n-1; j>i; j--) {
+            if (mas[j-1].real()>mas[j].real()) {
+                a=mas[j-1];
+                mas[j-1]=mas[j];
+                mas[j]=a;
+            }
+        }
+    }
+}
+
 int counter = 0;
-void czeroed (complex <double> c[], int k, int n){
+void czeroedcomplex (complex <double> c[], int k, int n){
     complex <double> *c0 = new complex <double> [n];
     arraycopy(c, c0, n);
-    bubblesort(c0, n);
+    bubblesortcomplex(c0, n);
     counter=0;
     for (int i=0, j=0;i<n && j<=k;i++){
         if (abs(c[i])<=abs(c0[k-1])){
@@ -98,7 +122,23 @@ void czeroed (complex <double> c[], int k, int n){
     }
 }
 
+void czeroeddouble (complex <double> c[], int k, int n){
+    complex <double> *c0 = new complex <double> [n];
+    arraycopy(c, c0, n);
+    bubblesortcomplex(c0, n);
+    counter=0;
+    for (int i=0, j=0;i<n && j<=k;i++){
+        if (c[i].real()<=c0[k-1].real()){
+            //c[i]=0;
+            c[i]=0;
+            j++;
+            counter++;
+        }
+    }
+}
+
 double BottomBound = -10, TopBound = 10;
+complex <double> *z = new complex <double> [1];
 complex <double> *f = new complex <double> [1];
 complex <double> **T = new complex <double> *[1];
 complex <double> *c = new complex <double> [1];
@@ -109,16 +149,23 @@ complex <double> *c1 = new complex <double> [1];
 complex <double> *f1 = new complex <double> [1];
 
 
-double max_x=0,min_x=0,max_y=0,min_y=0;
+double max_x=0,min_x=0,max_y=0,min_y=0,max2_x=0,min2_x=0,max2_y=0,min2_y=0;
 
 
 
 
 //функция, возвращающая массив N случайных комплексных чисел от a до b
-void random_array(complex <double> mas[], int n, double a, double b){
+void random_arraycomplex(complex <double> mas[], int n, double a, double b){
     for (int i=0; i<n; i++){
         mas[i].real((double)(rand())/RAND_MAX * (b-a) + a);
         mas[i].imag((double)(rand())/RAND_MAX * (b-a) + a);
+    }
+}
+
+void random_arraydouble(complex <double> mas[], int n, double a, double b){
+    for (int i=0; i<n; i++){
+        mas[i].real((double)(rand())/RAND_MAX * (b-a) + a);
+        mas[i].imag(0);
     }
 }
 
@@ -126,7 +173,7 @@ void random_array(complex <double> mas[], int n, double a, double b){
 void MainWindow::basic(){
     int n = ui->spinBox->value();
     f = new complex <double> [n];
-    random_array(f, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
+    random_arraycomplex(f, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
     T = new complex <double> *[n];
     T=matrix(n);
     c = new complex <double> [n];
@@ -167,6 +214,88 @@ void MainWindow::basic(){
         various();
 }
 
+void MainWindow::basic2(){
+    int n = ui->spinBox->value();
+    z = new complex <double> [n];
+    f = new complex <double> [n];
+    random_arraydouble(z, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
+    f = userfunction(z, n);
+    T = new complex <double> *[n];
+    T=matrix(n);
+    c = new complex <double> [n];
+    invT=inv(T, n);
+    c = multypl(invT, f, n);
+
+    QVector<double> x(n), y(n); //Массивы координат точек
+        max_x = z[0].real();
+        min_x = z[0].real();
+        max_y=f[0].real();
+        min_y=f[0].real();
+        for (int i = 0; i<n; i++)//Пробегаем по всем точкам
+        {
+            x[i] = z[i].real();
+            y[i] = f[i].real();
+            if (z[i].real() > max_x) {
+                max_x = z[i].real();
+            }
+            if (z[i].real() < min_x) {
+                min_x = z[i].real();
+            }
+            if (f[i].real() > max_y){
+                max_y=f[i].real();
+            }
+            if (f[i].real() < min_y){
+                min_y=f[i].real();
+            }
+        }
+
+        ui->widget->graph(0)->setData(x, y);
+
+        //Установим область, которая будет показываться на графике
+        ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
+        ui->widget->yAxis->setRange(min_y, max_y);//Для оси Oy
+
+        //И перерисуем график на нашем widget
+        ui->widget->replot();
+
+
+        QVector<double> x2(n), y2(n); //Массивы координат точек
+            max2_x = f[0].real();
+            min2_x = f[0].real();
+            max2_y=f[0].imag();
+            min2_y=f[0].imag();
+            for (int i = 0; i<n; i++)//Пробегаем по всем точкам
+            {
+                x2[i] = f[i].real();
+                y2[i] = f[i].imag();
+                if (f[i].real() > max2_x) {
+                    max2_x = f[i].real();
+                }
+                if (f[i].real() < min2_x) {
+                    min2_x = f[i].real();
+                }
+                if (f[i].imag() > max2_y){
+                    max2_y=f[i].imag();
+                }
+                if (f[i].imag() < min2_y){
+                    min2_y=f[i].imag();
+                }
+            }
+
+            ui->widget_2->graph(0)->setData(x2, y2);
+            //ui->widget_2
+
+
+            //Установим область, которая будет показываться на графике
+            ui->widget_2->xAxis->setRange(min2_x, max2_x);//Для оси Ox
+            ui->widget_2->yAxis->setRange(min2_y, max2_y);//Для оси Oy
+
+            //И перерисуем график на нашем widget
+            ui->widget_2->replot();
+
+        various2();
+}
+
 void MainWindow::various(){
     int hs = ui->horizontalSlider->value();
     int n = ui->spinBox->value();
@@ -174,7 +303,7 @@ void MainWindow::various(){
     int k = (int)temp;
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
-    czeroed(c1, k, n);
+    czeroedcomplex(c1, k, n);
 
     ui->spinBox_3->setProperty("value", counter);
 
@@ -210,10 +339,85 @@ void MainWindow::various(){
         ui->widget->replot();
 }
 
+void MainWindow::various2(){
+    int hs = ui->horizontalSlider->value();
+    int n = ui->spinBox->value();
+    double temp = (double)n/100.0*(double)hs;
+    int k = (int)temp;
+    c1 = new complex <double> [n];
+    arraycopy(c, c1, n);
+    czeroeddouble(c1, k, n);
+
+    ui->spinBox_3->setProperty("value", counter);
+
+    f1 = new complex <double> [n];
+    f1=multypl(T, c1, n);
+
+    QVector<double> x(n), y(n); //Массивы координат точек
+        for (int i = 0; i<n; i++)//Пробегаем по всем точкам
+        {
+            x[i] = z[i].real();
+            y[i] = f1[i].real();
+            if (z[i].real() > max_x) {
+                max_x = z[i].real();
+            }
+            if (z[i].real() < min_x) {
+                min_x = z[i].real();
+            }
+            if (f1[i].real() > max_y){
+                max_y=f1[i].real();
+            }
+            if (f1[i].real() < min_y){
+                min_y=f1[i].real();
+            }
+        }
+
+        ui->widget->graph(1)->setData(x, y);
+
+        //Установим область, которая будет показываться на графике
+        ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
+        ui->widget->yAxis->setRange(min_y, max_y);//Для оси Oy
+
+        //И перерисуем график на нашем widget
+        ui->widget->replot();
+
+        QVector<double> x2(n), y2(n); //Массивы координат точек
+            max2_x = f1[0].real();
+            min2_x = f1[0].real();
+            max2_y=f1[0].imag();
+            min2_y=f1[0].imag();
+            for (int i = 0; i<n; i++)//Пробегаем по всем точкам
+            {
+                x2[i] = f1[i].real();
+                y2[i] = f1[i].imag();
+                if (f1[i].real() > max2_x) {
+                    max2_x = f1[i].real();
+                }
+                if (f1[i].real() < min2_x) {
+                    min2_x = f1[i].real();
+                }
+                if (f1[i].imag() > max2_y){
+                    max2_y=f1[i].imag();
+                }
+                if (f1[i].imag() < min2_y){
+                    min2_y=f1[i].imag();
+                }
+            }
+
+            ui->widget_2->graph(0)->setData(x2, y2);
+
+            //Установим область, которая будет показываться на графике
+            ui->widget_2->xAxis->setRange(min2_x, max2_x);//Для оси Ox
+            ui->widget_2->yAxis->setRange(min2_y, max2_y);//Для оси Oy
+
+            //И перерисуем график на нашем widget
+            ui->widget_2->replot();
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-   QMainWindow::resizeEvent(event);
-   ui->widget->resize(QMainWindow::width(), QMainWindow::height()-150);
+   //QMainWindow::resizeEvent(event);
+   //ui->widget->resize(QMainWindow::width(), QMainWindow::height()-150);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -236,7 +440,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->xAxis->setLabel("x");
     ui->widget->yAxis->setLabel("y");
 
-    basic();
+
+    ui->widget_2->addGraph();
+    ui->widget_2->addGraph();
+    //
+    ui->widget_2->graph(0)->setPen(QColor(255, 0, 0, 255));
+    ui->widget_2->graph(1)->setPen(QColor(0, 0, 255, 255));
+    //
+    ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    //Подписываем оси Ox и Oy
+    ui->widget_2->xAxis->setLabel("x");
+    ui->widget_2->yAxis->setLabel("y");
+
+    //basic();
 }
 
 MainWindow::~MainWindow()
@@ -298,13 +515,13 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_spinBox_valueChanged(int value)
 {
-    basic();
+    basic2();
     //various();
 }
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    various();
+    various2();
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(double value)

@@ -21,6 +21,8 @@ private slots:
     void resizeEvent(QResizeEvent* event);
     void basic();
     void various();
+    void basic2();
+    void various2();
 
 
     void on_spinBox_valueChanged(int arg1);
