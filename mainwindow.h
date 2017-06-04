@@ -23,6 +23,8 @@ private slots:
     void various();
     void basic2();
     void various2();
+    void taskBasic();
+    void taskVarious();
 
 
     void on_spinBox_valueChanged(int arg1);

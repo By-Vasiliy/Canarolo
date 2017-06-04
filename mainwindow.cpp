@@ -112,8 +112,8 @@ void czeroedcomplex (complex <double> c[], int k, int n){
     arraycopy(c, c0, n);
     bubblesortcomplex(c0, n);
     counter=0;
-    for (int i=0, j=0;i<n && j<=k;i++){
-        if (abs(c[i])<=abs(c0[k-1])){
+    for (int i=0, j=0;i<n && j<k;i++){
+        if (abs(c[i])<=abs(c0[k-1]) && k!=0){
             //c[i]=0;
             c[i]=0;
             j++;
@@ -203,7 +203,7 @@ void MainWindow::basic(){
             }
         }
 
-        ui->widget->graph(0)->setData(x, y);
+        ui->widget->graph(1)->setData(x, y);
 
         //Установим область, которая будет показываться на графике
         ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
@@ -249,7 +249,7 @@ void MainWindow::basic2(){
             }
         }
 
-        ui->widget->graph(0)->setData(x, y);
+        ui->widget->graph(1)->setData(x, y);
 
         //Установим область, которая будет показываться на графике
         ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
@@ -300,7 +300,10 @@ void MainWindow::various(){
     int hs = ui->horizontalSlider->value();
     int n = ui->spinBox->value();
     double temp = (double)n/100.0*(double)hs;
-    int k = (int)temp;
+    int k = int(temp);
+    if (hs==0){
+        k=0;
+    }
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
     czeroedcomplex(c1, k, n);
@@ -329,7 +332,7 @@ void MainWindow::various(){
             }
         }
 
-        ui->widget->graph(1)->setData(x, y);
+        ui->widget->graph(0)->setData(x, y);
 
         //Установим область, которая будет показываться на графике
         ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
@@ -343,10 +346,13 @@ void MainWindow::various2(){
     int hs = ui->horizontalSlider->value();
     int n = ui->spinBox->value();
     double temp = (double)n/100.0*(double)hs;
-    int k = (int)temp;
+    int k = int(temp);
+    if (hs==0){
+        k=0;
+    }
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
-    czeroeddouble(c1, k, n);
+    czeroedcomplex(c1, k, n);
 
     ui->spinBox_3->setProperty("value", counter);
 
@@ -372,7 +378,7 @@ void MainWindow::various2(){
             }
         }
 
-        ui->widget->graph(1)->setData(x, y);
+        ui->widget->graph(0)->setData(x, y);
 
         //Установим область, которая будет показываться на графике
         ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
@@ -404,7 +410,7 @@ void MainWindow::various2(){
                 }
             }
 
-            ui->widget_2->graph(0)->setData(x2, y2);
+            ui->widget_2->graph(1)->setData(x2, y2);
 
             //Установим область, которая будет показываться на графике
             ui->widget_2->xAxis->setRange(min2_x, max2_x);//Для оси Ox
@@ -431,11 +437,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->addGraph();
     ui->widget->addGraph();
     //
-    ui->widget->graph(0)->setPen(QColor(255, 0, 0, 255));
-    ui->widget->graph(1)->setPen(QColor(0, 0, 255, 255));
+    ui->widget->graph(0)->setPen(QColor(50, 200, 0, 255));
+    ui->widget->graph(1)->setPen(QColor(255, 100, 50, 255));
     //
-    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
-    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
     //Подписываем оси Ox и Oy
     ui->widget->xAxis->setLabel("x");
     ui->widget->yAxis->setLabel("y");
@@ -444,11 +450,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget_2->addGraph();
     ui->widget_2->addGraph();
     //
-    ui->widget_2->graph(0)->setPen(QColor(255, 0, 0, 255));
-    ui->widget_2->graph(1)->setPen(QColor(0, 0, 255, 255));
+    ui->widget_2->graph(0)->setPen(QColor(50, 200, 0, 255));
+    ui->widget_2->graph(1)->setPen(QColor(255, 100, 50, 255));
     //
-    ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
-    ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+    ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
     //Подписываем оси Ox и Oy
     ui->widget_2->xAxis->setLabel("x");
     ui->widget_2->yAxis->setLabel("y");
@@ -513,15 +519,31 @@ void MainWindow::on_pushButton_clicked()
         ui->widget->replot();
 }
 
+void MainWindow::taskBasic()
+{
+    if (ui->radioButton->isChecked()){
+        basic();
+    }else{
+        basic2();
+    }
+}
+
+void MainWindow::taskVarious(){
+    if (ui->radioButton->isChecked()){
+        various();
+    }else{
+        various2();
+    }
+}
+
 void MainWindow::on_spinBox_valueChanged(int value)
 {
-    basic2();
-    //various();
+    taskBasic();
 }
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    various2();
+    taskVarious();
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(double value)
