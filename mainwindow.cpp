@@ -52,10 +52,9 @@ complex<double> **calculateInverseMatrix(complex<double> **mas, int n) {
 }
 
 //пользовательская функция
-complex<double> *userfunction(complex<double> *z, int n) {
+complex<double> *MyFanc(complex<double> *z, int n) {
     complex<double> *f = new complex<double>[n];
     for (int i = 0; i < n; i++) {
-        //f[i]=z[i]*z[i];
         f[i] = pow(sin(z[i]), sin(z[i]));
     }
     return f;
@@ -81,7 +80,7 @@ void complexArrayCopy(complex<double> mas1[], complex<double> mas2[], int n) {
 }
 
 //сортировка массива
-void bubblesortcomplex(complex<double> mas[], int n) {
+void bubbleSortComplex(complex<double> mas[], int n) {
     complex<double> a;
     for (int i = 0; i < n; i++) {
         for (int j = n - 1; j > i; j--) {
@@ -109,10 +108,10 @@ void bubbleSortDouble(complex<double> mas[], int n) {
 
 int counter = 0;
 
-void czeroedcomplex(complex<double> c[], int k, int n) {
+void zeroedComplex(complex<double> c[], int k, int n) {
     complex<double> *c0 = new complex<double>[n];
     complexArrayCopy(c, c0, n);
-    bubblesortcomplex(c0, n);
+    bubbleSortComplex(c0, n);
     counter = 0;
     for (int i = 0, j = 0; i < n && j < k; i++) {
         if (abs(c[i]) <= abs(c0[k - 1]) && k != 0) {
@@ -124,10 +123,10 @@ void czeroedcomplex(complex<double> c[], int k, int n) {
     }
 }
 
-void czeroeddouble(complex<double> c[], int k, int n) {
+void zeroedDouble(complex<double> c[], int k, int n) {
     complex<double> *c0 = new complex<double>[n];
     complexArrayCopy(c, c0, n);
-    bubblesortcomplex(c0, n);
+    bubbleSortComplex(c0, n);
     counter = 0;
     for (int i = 0, j = 0; i < n && j <= k; i++) {
         if (c[i].real() <= c0[k - 1].real()) {
@@ -144,7 +143,7 @@ complex<double> *z = new complex<double>[1];
 complex<double> *f = new complex<double>[1];
 complex<double> **MATRIX = new complex<double> *[1];
 complex<double> *c = new complex<double>[1];
-complex<double> **invT = new complex<double> *[1];
+complex<double> **iMATRIX = new complex<double> *[1];
 
 // Load/OnChange
 complex<double> *c1 = new complex<double>[1];
@@ -175,8 +174,8 @@ void MainWindow::yinOne() {
     MATRIX = new complex<double> *[n];
     MATRIX = calculateMatrix(n);
     c = new complex<double>[n];
-    invT = calculateInverseMatrix(MATRIX, n);
-    c = multypl(invT, f, n);
+    iMATRIX = calculateInverseMatrix(MATRIX, n);
+    c = multypl(iMATRIX, f, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
     max_x = f[0].real();
@@ -214,12 +213,12 @@ void MainWindow::yinTwo() {
     z = new complex<double>[n];
     f = new complex<double>[n];
     doubleRandomArrayGenerate(z, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
-    f = userfunction(z, n);
+    f = MyFanc(z, n);
     MATRIX = new complex<double> *[n];
     MATRIX = calculateMatrix(n);
     c = new complex<double>[n];
-    invT = calculateInverseMatrix(MATRIX, n);
-    c = multypl(invT, f, n);
+    iMATRIX = calculateInverseMatrix(MATRIX, n);
+    c = multypl(iMATRIX, f, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
     max_x = z[0].real();
@@ -294,7 +293,7 @@ void MainWindow::yanOne() {
     }
     c1 = new complex<double>[n];
     complexArrayCopy(c, c1, n);
-    czeroedcomplex(c1, k, n);
+    zeroedComplex(c1, k, n);
 
     ui->spinBox_3->setProperty("value", counter);
 
@@ -343,7 +342,7 @@ void MainWindow::yanTwo() {
     }
     c1 = new complex<double>[n];
     complexArrayCopy(c, c1, n);
-    czeroedcomplex(c1, k, n);
+    zeroedComplex(c1, k, n);
 
     ui->spinBox_3->setProperty("value", counter);
 
