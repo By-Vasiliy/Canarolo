@@ -9,14 +9,14 @@
 using namespace std;
 
 
-template<typename T>
-T &real(std::complex <T> &c) {
-    return reinterpret_cast<T *>(&c)[0];
+template<typename MATRIX>
+MATRIX &real(std::complex <MATRIX> &c) {
+    return reinterpret_cast<MATRIX *>(&c)[0];
 }
 
-template<typename T>
-T &imag(std::complex <T> &c) {
-    return reinterpret_cast<T *>(&c)[1];
+template<typename MATRIX>
+MATRIX &imag(std::complex <MATRIX> &c) {
+    return reinterpret_cast<MATRIX *>(&c)[1];
 }
 
 
@@ -24,7 +24,7 @@ static const complex<double> mnim1(0, 1.0);
 static const double pi = 3.14159265;
 
 //функция, возвращающая двумерный массив - матрицу размерности N*N
-complex<double> **matrix(int n) {
+complex<double> **calculateMatrix(int n) {
     complex<double> **m = new complex<double> *[n];
     for (int i = 0; i < n; i++) {
         m[i] = new complex<double>[n];
@@ -39,7 +39,7 @@ complex<double> **matrix(int n) {
 }
 
 //функция, возращающая обратную матрицу
-complex<double> **inv(complex<double> **mas, int n) {
+complex<double> **calculateInverseMatrix(complex<double> **mas, int n) {
     complex<double> **invmatrix = new complex<double> *[n];
     complex<double> nz(n, 0);
     for (int i = 0; i < n; i++) {
@@ -56,7 +56,7 @@ complex<double> *userfunction(complex<double> *z, int n) {
     complex<double> *f = new complex<double>[n];
     for (int i = 0; i < n; i++) {
         //f[i]=z[i]*z[i];
-        f[i] = pow(sin(z[i]),sin(z[i]));
+        f[i] = pow(sin(z[i]), sin(z[i]));
     }
     return f;
 }
@@ -142,7 +142,7 @@ void czeroeddouble(complex<double> c[], int k, int n) {
 double BottomBound = -10, TopBound = 10;
 complex<double> *z = new complex<double>[1];
 complex<double> *f = new complex<double>[1];
-complex<double> **T = new complex<double> *[1];
+complex<double> **MATRIX = new complex<double> *[1];
 complex<double> *c = new complex<double>[1];
 complex<double> **invT = new complex<double> *[1];
 
@@ -154,28 +154,28 @@ complex<double> *f1 = new complex<double>[1];
 double max_x = 0, min_x = 0, max_y = 0, min_y = 0, max2_x = 0, min2_x = 0, max2_y = 0, min2_y = 0;
 
 //функция, возвращающая массив N случайных комплексных чисел от a до b
-void random_arraycomplex(complex<double> mas[], int n, double a, double b) {
+void complexRandomArrayGenerate(complex<double> mas[], int n, double a, double b) {
     for (int i = 0; i < n; i++) {
         mas[i].real((double) (rand()) / RAND_MAX * (b - a) + a);
         mas[i].imag((double) (rand()) / RAND_MAX * (b - a) + a);
     }
 }
 
-void random_arraydouble(complex<double> mas[], int n, double a, double b) {
+void doubleRandomArrayGenerate(complex<double> mas[], int n, double a, double b) {
     for (int i = 0; i < n; i++) {
         mas[i].real((double) (rand()) / RAND_MAX * (b - a) + a);
         mas[i].imag(0);
     }
 }
 
-void MainWindow::basic() {
+void MainWindow::yinOne() {
     int n = ui->spinBox->value();
     f = new complex<double>[n];
-    random_arraycomplex(f, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
-    T = new complex<double> *[n];
-    T = matrix(n);
+    complexRandomArrayGenerate(f, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
+    MATRIX = new complex<double> *[n];
+    MATRIX = calculateMatrix(n);
     c = new complex<double>[n];
-    invT = inv(T, n);
+    invT = calculateInverseMatrix(MATRIX, n);
     c = multypl(invT, f, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
@@ -209,16 +209,16 @@ void MainWindow::basic() {
     eventYan();
 }
 
-void MainWindow::basic2() {
+void MainWindow::yinTwo() {
     int n = ui->spinBox->value();
     z = new complex<double>[n];
     f = new complex<double>[n];
-    random_arraydouble(z, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
+    doubleRandomArrayGenerate(z, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
     f = userfunction(z, n);
-    T = new complex<double> *[n];
-    T = matrix(n);
+    MATRIX = new complex<double> *[n];
+    MATRIX = calculateMatrix(n);
     c = new complex<double>[n];
-    invT = inv(T, n);
+    invT = calculateInverseMatrix(MATRIX, n);
     c = multypl(invT, f, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
@@ -281,7 +281,7 @@ void MainWindow::basic2() {
     eventYan();
 }
 
-void MainWindow::various() {
+void MainWindow::yanOne() {
     int hs = ui->horizontalSlider->value();
     int n = ui->spinBox->value();
     double temp = (double) n / 100.0 * (double) hs;
@@ -299,7 +299,7 @@ void MainWindow::various() {
     ui->spinBox_3->setProperty("value", counter);
 
     f1 = new complex<double>[n];
-    f1 = multypl(T, c1, n);
+    f1 = multypl(MATRIX, c1, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
     for (int i = 0; i < n; i++)//Пробегаем по всем точкам
@@ -330,7 +330,7 @@ void MainWindow::various() {
     ui->widget->replot();
 }
 
-void MainWindow::various2() {
+void MainWindow::yanTwo() {
     int hs = ui->horizontalSlider->value();
     int n = ui->spinBox->value();
     double temp = (double) n / 100.0 * (double) hs;
@@ -348,7 +348,7 @@ void MainWindow::various2() {
     ui->spinBox_3->setProperty("value", counter);
 
     f1 = new complex<double>[n];
-    f1 = multypl(T, c1, n);
+    f1 = multypl(MATRIX, c1, n);
 
     QVector<double> x(n), y(n); //Массивы координат точек
     for (int i = 0; i < n; i++)//Пробегаем по всем точкам
@@ -407,7 +407,7 @@ void MainWindow::various2() {
 
 void MainWindow::resizeEvent(QResizeEvent * event) {
     QMainWindow::resizeEvent(event);
-    ui->widget->resize(QMainWindow::width(), QMainWindow::height()-155);
+    ui->widget->resize(QMainWindow::width(), QMainWindow::height() - 155);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -428,17 +428,17 @@ MainWindow::~MainWindow() {
 
 void MainWindow::eventYin() {
     if (ui->radioButton->isChecked()) {
-        basic();
+        yinOne();
     } else {
-        basic2();
+        yinTwo();
     }
 }
 
 void MainWindow::eventYan() {
     if (ui->radioButton->isChecked()) {
-        various();
+        yanOne();
     } else {
-        various2();
+        yanTwo();
     }
 }
 
@@ -467,14 +467,11 @@ void MainWindow::initPlots() {
     ui->widget->graph(0)->setPen(QColor(255, 0, 0, 255));
     ui->widget->graph(1)->setPen(QColor(0, 0, 255, 255));
     //
-    //ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //Подписываем оси Ox и Oy
     ui->widget->xAxis->setLabel("x");
     ui->widget->yAxis->setLabel("y");
     ui->widget->graph(0)->clearData();
     ui->widget->graph(1)->clearData();
-
+    //
     ui->widget_2->clearGraphs();
     ui->widget_2->addGraph();
     ui->widget_2->addGraph();
@@ -482,9 +479,6 @@ void MainWindow::initPlots() {
     ui->widget_2->graph(0)->setPen(QColor(50, 200, 0, 255));
     ui->widget_2->graph(1)->setPen(QColor(255, 100, 50, 255));
     //
-    //ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //Подписываем оси Ox и Oy
     ui->widget_2->xAxis->setLabel("x");
     ui->widget_2->yAxis->setLabel("y");
     //
@@ -505,7 +499,6 @@ void MainWindow::on_radioButton_2_clicked() {
     eventYin();
 }
 
-void MainWindow::on_pushButton_clicked()
-{
+void MainWindow::on_pushButton_clicked() {
     eventYin();
 }

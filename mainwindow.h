@@ -19,10 +19,10 @@ private slots:
 
 
     void resizeEvent(QResizeEvent* event);
-    void basic();
-    void various();
-    void basic2();
-    void various2();
+    void yinOne();
+    void yanOne();
+    void yinTwo();
+    void yanTwo();
     void eventYin();
     void eventYan();
 
