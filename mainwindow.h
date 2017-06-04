@@ -16,7 +16,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+
 
     void resizeEvent(QResizeEvent* event);
     void basic();
@@ -34,6 +34,12 @@ private slots:
     void on_doubleSpinBox_valueChanged(double arg1);
 
     void on_doubleSpinBox_2_valueChanged(double arg1);
+
+    void initPlots();
+
+    void on_radioButton_clicked();
+
+    void on_radioButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;

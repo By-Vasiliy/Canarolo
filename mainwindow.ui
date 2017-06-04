@@ -168,6 +168,9 @@
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
+     <property name="maximum">
+      <number>1024</number>
+     </property>
     </widget>
    </widget>
    <widget class="QSplitter" name="splitter_2">

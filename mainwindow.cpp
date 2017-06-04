@@ -211,7 +211,7 @@ void MainWindow::basic(){
 
         //И перерисуем график на нашем widget
         ui->widget->replot();
-        various();
+        taskVarious();
 }
 
 void MainWindow::basic2(){
@@ -293,7 +293,7 @@ void MainWindow::basic2(){
             //И перерисуем график на нашем widget
             ui->widget_2->replot();
 
-        various2();
+        taskVarious();
 }
 
 void MainWindow::various(){
@@ -433,31 +433,8 @@ MainWindow::MainWindow(QWidget *parent) :
     srand(time(0));
 
     ui->setupUi(this);
-    //
-    ui->widget->addGraph();
-    ui->widget->addGraph();
-    //
-    ui->widget->graph(0)->setPen(QColor(50, 200, 0, 255));
-    ui->widget->graph(1)->setPen(QColor(255, 100, 50, 255));
-    //
-    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //Подписываем оси Ox и Oy
-    ui->widget->xAxis->setLabel("x");
-    ui->widget->yAxis->setLabel("y");
 
-
-    ui->widget_2->addGraph();
-    ui->widget_2->addGraph();
-    //
-    ui->widget_2->graph(0)->setPen(QColor(50, 200, 0, 255));
-    ui->widget_2->graph(1)->setPen(QColor(255, 100, 50, 255));
-    //
-    ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-    //Подписываем оси Ox и Oy
-    ui->widget_2->xAxis->setLabel("x");
-    ui->widget_2->yAxis->setLabel("y");
+    initPlots();
 
     taskBasic();
     //basic();
@@ -466,58 +443,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    //Рисуем график y=x*x
-
-        //Сгенерируем данные
-        //Для этого создадим два массива точек:
-        //один для созранения x координат точек,
-        //а второй для y соответственно
-
-        double a = -1; //Начало интервала, где рисуем график по оси Ox
-        double b =  1; //Конец интервала, где рисуем график по оси Ox
-        double h = 0.01; //Шаг, с которым будем пробегать по оси Ox
-
-        int N=(b-a)/h + 2; //Вычисляем количество точек, которые будем отрисовывать
-        QVector<double> x(N), y(N); //Массивы координат точек
-
-        //Вычисляем наши данные
-        int i=0;
-        for (double X=a; X<=b; X+=h)//Пробегаем по всем точкам
-        {
-            x[i] = X;
-            y[i] = X*X;//Формула нашей функции
-            i++;
-        }
-
-        ui->widget->clearGraphs();//Если нужно, но очищаем все графики
-        //Добавляем один график в widget
-        ui->widget->addGraph();
-        //Говорим, что отрисовать нужно график по нашим двум массивам x и y
-        ui->widget->graph(0)->setData(x, y);
-
-        //Подписываем оси Ox и Oy
-        ui->widget->xAxis->setLabel("x");
-        ui->widget->yAxis->setLabel("y");
-
-        //Установим область, которая будет показываться на графике
-        ui->widget->xAxis->setRange(a, b);//Для оси Ox
-
-        //Для показа границ по оси Oy сложнее, так как надо по правильному
-        //вычислить минимальное и максимальное значение в векторах
-        double minY = y[0], maxY = y[0];
-        for (int i=1; i<N; i++)
-        {
-            if (y[i]<minY) minY = y[i];
-            if (y[i]>maxY) maxY = y[i];
-        }
-        ui->widget->yAxis->setRange(minY, maxY);//Для оси Oy
-
-        //И перерисуем график на нашем widget
-        ui->widget->replot();
 }
 
 void MainWindow::taskBasic()
@@ -555,4 +480,54 @@ void MainWindow::on_doubleSpinBox_valueChanged(double value)
 void MainWindow::on_doubleSpinBox_2_valueChanged(double value)
 {
     ui->doubleSpinBox->setProperty("maximum",value);
+}
+
+void MainWindow::initPlots()
+{
+    ui->widget->clearGraphs();
+    //
+    ui->widget->addGraph();
+    ui->widget->addGraph();
+    //
+    ui->widget->graph(0)->setPen(QColor(50, 200, 0, 255));
+    ui->widget->graph(1)->setPen(QColor(255, 100, 50, 255));
+    //
+    ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    ui->widget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    //Подписываем оси Ox и Oy
+    ui->widget->xAxis->setLabel("x");
+    ui->widget->yAxis->setLabel("y");
+    ui->widget->graph(0)->clearData();
+    ui->widget->graph(1)->clearData();
+
+    ui->widget_2->clearGraphs();
+    ui->widget_2->addGraph();
+    ui->widget_2->addGraph();
+    //
+    ui->widget_2->graph(0)->setPen(QColor(50, 200, 0, 255));
+    ui->widget_2->graph(1)->setPen(QColor(255, 100, 50, 255));
+    //
+    ui->widget_2->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    ui->widget_2->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    //Подписываем оси Ox и Oy
+    ui->widget_2->xAxis->setLabel("x");
+    ui->widget_2->yAxis->setLabel("y");
+    //
+    ui->widget_2->graph(0)->clearData();
+    ui->widget_2->graph(1)->clearData();
+    ui->widget_2->hide();
+}
+
+void MainWindow::on_radioButton_clicked()
+{
+    initPlots();
+    ui->widget_2->hide();
+    taskBasic();
+}
+
+void MainWindow::on_radioButton_2_clicked()
+{
+    initPlots();
+    ui->widget_2->show();
+    taskBasic();
 }
