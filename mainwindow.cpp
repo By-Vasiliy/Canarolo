@@ -459,6 +459,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget_2->xAxis->setLabel("x");
     ui->widget_2->yAxis->setLabel("y");
 
+    taskBasic();
     //basic();
 }
 
