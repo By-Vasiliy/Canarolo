@@ -97,42 +97,36 @@ void bubblesortcomplex(complex <double> mas[], int n){
     }
 }
 
-void bubblesortdouble(complex <double> mas[], int n){
-    complex <double> a;
-    for(int i=0; i<n; i++) {
-        for(int j=n-1; j>i; j--) {
-            if (mas[j-1].real()>mas[j].real()) {
-                a=mas[j-1];
-                mas[j-1]=mas[j];
-                mas[j]=a;
-            }
+//Quicksort by module
+template<typename quickSortAbsType, typename quickSortNumberAbsType>
+void quickSortAbs(quickSortAbsType *array, quickSortNumberAbsType firstElementNumber, quickSortNumberAbsType lastElementNumber) {
+    quickSortAbsType temp;
+    long double averageElementNumber;
+    quickSortNumberAbsType leftElementNumber = firstElementNumber, rightElementNumber = lastElementNumber;
+    averageElementNumber = abs(array[leftElementNumber + (rightElementNumber - leftElementNumber) / 2]);
+    do {
+        while (abs(array[leftElementNumber]) < averageElementNumber) leftElementNumber++;
+        while (abs(array[rightElementNumber]) > averageElementNumber) rightElementNumber--;
+        if (leftElementNumber <= rightElementNumber) {
+            temp = array[leftElementNumber];
+            array[leftElementNumber] = array[rightElementNumber];
+            array[rightElementNumber] = temp;
+            leftElementNumber++;
+            rightElementNumber--;
         }
-    }
+    } while (leftElementNumber < rightElementNumber);
+    if (firstElementNumber < rightElementNumber) quickSortAbs(array, firstElementNumber, rightElementNumber);
+    if (leftElementNumber < lastElementNumber) quickSortAbs(array, leftElementNumber, lastElementNumber);
 }
 
 int counter = 0;
 void czeroedcomplex (complex <double> c[], int k, int n){
     complex <double> *c0 = new complex <double> [n];
     arraycopy(c, c0, n);
-    bubblesortcomplex(c0, n);
+    quickSortAbs(c0, 0,n-1);
     counter=0;
     for (int i=0, j=0;i<n && j<k;i++){
         if (abs(c[i])<=abs(c0[k-1]) && k!=0){
-            c[i]=0;
-            j++;
-            counter++;
-        }
-    }
-}
-
-void czeroeddouble (complex <double> c[], int k, int n){
-    complex <double> *c0 = new complex <double> [n];
-    arraycopy(c, c0, n);
-    bubblesortcomplex(c0, n);
-    counter=0;
-    for (int i=0, j=0;i<n && j<=k;i++){
-        if (c[i].real()<=c0[k-1].real()){
-            //c[i]=0;
             c[i]=0;
             j++;
             counter++;
