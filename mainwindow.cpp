@@ -56,7 +56,10 @@ complex <double> *userfunction (complex <double> *z, int n){
     complex <double> *f = new complex <double> [n];
     for (int i=0;i<n;i++){
         //f[i]=z[i]*z[i];
-        f[i]=sin(z[i]);
+        //f[i]=pow(z[i],3);
+        //f[i]=sin(z[i].real()*pi/180);
+        f[i]=abs(z[i]);
+        f[i].imag(0);
     }
     return f;
 }
@@ -115,7 +118,6 @@ void czeroedcomplex (complex <double> c[], int k, int n){
     counter=0;
     for (int i=0, j=0;i<n && j<k;i++){
         if (abs(c[i])<=abs(c0[k-1]) && k!=0){
-            //c[i]=0;
             c[i]=0;
             j++;
             counter++;
@@ -170,6 +172,14 @@ void random_arraydouble(complex <double> mas[], int n, double a, double b){
     }
 }
 
+void argumentgeneration(complex <double> z[], int n){
+    double h = 720/n;
+    for (int i=0; i<n; i++){
+        z[i].real(-360 + h*i);
+        z[i].imag(0);
+    }
+}
+
 
 void MainWindow::basic(){
     int n = ui->spinBox->value();
@@ -219,7 +229,7 @@ void MainWindow::basic2(){
     int n = ui->spinBox->value();
     z = new complex <double> [n];
     f = new complex <double> [n];
-    random_arraydouble(z, n, ui->doubleSpinBox->value(), ui->doubleSpinBox_2->value());
+    argumentgeneration(z, n);
     f = userfunction(z, n);
     T = new complex <double> *[n];
     T=matrix(n);
@@ -253,8 +263,8 @@ void MainWindow::basic2(){
         ui->widget->graph(1)->setData(x, y);
 
         //Установим область, которая будет показываться на графике
-        ui->widget->xAxis->setRange(min_x, max_x);//Для оси Ox
-        ui->widget->yAxis->setRange(min_y, max_y);//Для оси Oy
+        ui->widget->xAxis->setRange(min_x*1.05, max_x*1.05);//Для оси Ox
+        ui->widget->yAxis->setRange(min_y*1.05, max_y*1.05);//Для оси Oy
 
         //И перерисуем график на нашем widget
         ui->widget->replot();
@@ -360,6 +370,10 @@ void MainWindow::various2(){
     c1 = new complex <double> [n];
     arraycopy(c, c1, n);
     czeroedcomplex(c1, k, n);
+ qDebug() << "[various2]:c1";
+    for (int i=0;i<n;i++){
+        qDebug() << "c1[" << i << "]:" << c1[i].real() << c1[i].imag();
+    }
 
     ui->spinBox_3->setProperty("value", counter);
 
@@ -431,6 +445,12 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
    //QMainWindow::resizeEvent(event);
    //ui->widget->resize(QMainWindow::width(), QMainWindow::height()-150);
+//    if (ui->radioButton->isChecked()){
+//        ui->widget->resize(QMainWindow::width(), QMainWindow::height()-150);
+//    }else{
+//        ui->widget->resize(QMainWindow::width()/2, QMainWindow::height()-150);
+//        ui->widget_2->resize(QMainWindow::width()/2, QMainWindow::height()-150);
+//    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -523,6 +543,14 @@ void MainWindow::initPlots()
     ui->widget_2->graph(0)->clearData();
     ui->widget_2->graph(1)->clearData();
     ui->widget_2->hide();
+
+    if(ui->radioButton->isChecked()){
+        ui->widget->graph(0)->setLineStyle(QCPGraph::lsNone);//убираем линии
+        ui->widget->graph(1)->setLineStyle(QCPGraph::lsNone);//убираем линии
+    }else{
+        ui->widget_2->graph(0)->setLineStyle(QCPGraph::lsNone);//убираем линии
+        ui->widget_2->graph(1)->setLineStyle(QCPGraph::lsNone);//убираем линии
+    }
 }
 
 void MainWindow::on_radioButton_clicked()
